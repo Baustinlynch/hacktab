@@ -726,7 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchHackatimeStats(username, apiKey) {
     try {
-      const url = `https://hackatime.hackclub.com/api/v1/users/${encodeURIComponent(username)}/stats?api_key=${encodeURIComponent(apiKey)}`;
+      const url = `https://hackatime.hackclub.com/api/v1/my/stats?api_key=${encodeURIComponent(apiKey)}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("API error");
       const data = await res.json();
