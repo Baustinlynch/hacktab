@@ -603,7 +603,11 @@ document.addEventListener('DOMContentLoaded', () => {
     hackatimeKeyInput.value = settings.hackatimeKey || '';
 
     applySettings(settings);
-    if (settings.hackatimeKey) fetchHackatimeStats();
+    if (settings.hackatimeKey) {
+      fetchHackatimeSummaries(settings.hackatimeKey);
+      fetchHackatimeStats(settings.hackatimeKey);
+      fetchHackatimeProjects(settings.hackatimeKey);
+    }
     if (settings.name) injectGreeting(settings.name);
   }
 
@@ -638,20 +642,18 @@ document.addEventListener('DOMContentLoaded', () => {
   saveHackatimeBtn.addEventListener('click', () => {
     saveSettings();
     alert("Hackatime API key saved!");
-    fetchHackatimeStats();
+    const settings = JSON.parse(localStorage.getItem('settings')) || {};
+    if (settings.hackatimeKey) {
+      fetchHackatimeSummaries(settings.hackatimeKey);
+      fetchHackatimeStats(settings.hackatimeKey);
+      fetchHackatimeProjects(settings.hackatimeKey);
+    }
   });
 
-  async function fetchHackatimeStats() {
-    const settings = JSON.parse(localStorage.getItem('settings')) || {};
-    if (!settings.hackatimeKey) {
-      hackatimeStats.textContent = "No API key set.";
-      hackatimeTable.style.display = "none";
-      return;
-    }
-
+  async function fetchHackatimeSummaries(apiKey) {
     try {
-      const res = await fetch("https://hackatime.com/api/v1/users/current/summaries?range=last_7_days", {
-        headers: { "Authorization": "Bearer " + settings.hackatimeKey }
+      const res = await fetch(`https://hackatime.hackclub.com/api/v1/users/current/summaries?range=last_7_days`, {
+        headers: { Authorization: `Bearer ${apiKey}` }
       });
       if (!res.ok) throw new Error("API error");
       const data = await res.json();
@@ -683,20 +685,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
       hackatimeTable.style.display = "table";
     } catch (err) {
-      hackatimeStats.textContent = "Error fetching stats.";
+      hackatimeStats.textContent = "Error fetching summaries.";
       hackatimeTable.style.display = "none";
       console.error(err);
     }
   }
 
+  async function fetchHackatimeStats(apiKey) {
+    try {
+      const res = await fetch(`https://hackatime.hackclub.com/api/v1/users/current/stats`, {
+        headers: { Authorization: `Bearer ${apiKey}` }
+      });
+      if (!res.ok) throw new Error("API error");
+      const data = await res.json();
+
+      // Example: show top languages
+      if (data.languages && data.languages.length) {
+        const tbody = hackatimeTable.querySelector('tbody');
+        const headerRow = hackatimeTable.querySelector('thead tr');
+        headerRow.innerHTML = "<th>Language</th><th>Time</th>";
+        tbody.innerHTML = "";
+        data.languages.slice(0, 10).forEach(lang => {
+          const tr = document.createElement('tr');
+          const nameCell = document.createElement('td');
+          const timeCell = document.createElement('td');
+          nameCell.textContent = lang.name;
+          nameCell.style.padding = "6px";
+          nameCell.style.border = "1px solid #1b2330";
+          timeCell.textContent = lang.text;
+          timeCell.style.padding = "6px";
+          timeCell.style.border = "1px solid #1b2330";
+          tr.appendChild(nameCell);
+          tr.appendChild(timeCell);
+          tbody.appendChild(tr);
+        });
+        hackatimeTable.style.display = "table";
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function fetchHackatimeProjects(apiKey) {
+    try {
+      const res = await fetch(`https://hackatime.hackclub.com/api/v1/users/current/projects`, {
+        headers: { Authorization: `Bearer ${apiKey}` }
+      });
+      if (!res.ok) throw new Error("API error");
+      const data = await res.json();
+
+      // Example: log top projects
+      console.log("Projects:", data);
+      // You can render them in another window or extend hackatimeTable
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   function injectGreeting(name) {
-    // Remove old greeting if present
     const oldGreeting = term1.querySelector('.greetingLine');
     if (oldGreeting) oldGreeting.remove();
     const oldOutput = term1.querySelector('.greetingOutput');
     if (oldOutput) oldOutput.remove();
 
-    // Add new greeting lines
     const greetingLine = document.createElement('span');
     greetingLine.className = 'line greetingLine';
     greetingLine.textContent = `$ echo "Hello, ${name}!"`;
@@ -710,7 +761,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadSettings();
 });
-
 
 
   </script>
