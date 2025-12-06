@@ -1,4 +1,111 @@
 
+
+
+// app.js
+// Expose refresh functions globally so other scripts can call them
+
+// Hackatime refresh
+window.refreshHackatime = async function(username, apiKey) {
+  const BASE_V1 = 'https://hackatime.hackclub.com/api/v1';
+  const BASE_HACKATIME_V1 = 'https://hackatime.hackclub.com/api/hackatime/v1';
+
+  const summaryEl = document.getElementById('hackatimeSummary');
+  const table = document.getElementById('hackatimeTable');
+  const tbody = table ? table.querySelector('tbody') : null;
+  const projectsWrap = document.getElementById('hackatimeProjects');
+  const projectsList = document.getElementById('hackatimeProjectsList');
+
+  if (!summaryEl) return;
+
+  summaryEl.textContent = 'Loading Hackatime…';
+  if (tbody) tbody.innerHTML = '';
+  if (table) table.style.display = 'none';
+  if (projectsList) projectsList.innerHTML = '';
+  if (projectsWrap) projectsWrap.style.display = 'none';
+
+  try {
+    // Today’s status
+    const todayRes = await fetch(`${BASE_HACKATIME_V1}/users/current/statusbar/today?api_key=${encodeURIComponent(apiKey)}`);
+    const todayJson = await todayRes.json();
+    const todayText = todayJson?.data?.grand_total?.text || '';
+    summaryEl.textContent = todayText ? `Today: ${todayText}` : 'No coding today';
+
+    // Stats
+    const statsRes = await fetch(`${BASE_V1}/users/${encodeURIComponent(username)}/stats?api_key=${encodeURIComponent(apiKey)}`);
+    const statsJson = await statsRes.json();
+    const totalSeconds = statsJson?.total_seconds || 0;
+    const totalHours = (totalSeconds / 3600).toFixed(2);
+    summaryEl.textContent += ` • Total: ${totalHours} hrs`;
+
+    // Languages
+    if (Array.isArray(statsJson?.languages) && tbody) {
+      tbody.innerHTML = '';
+      statsJson.languages.slice(0, 10).forEach(lang => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${lang.name}</td><td>${lang.text}</td>`;
+        tbody.appendChild(tr);
+      });
+      table.style.display = 'table';
+    }
+
+    // Projects
+    if (Array.isArray(statsJson?.projects) && projectsList) {
+      projectsList.innerHTML = '';
+      statsJson.projects.slice(0, 10).forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = `${p.name} — ${p.text}`;
+        projectsList.appendChild(li);
+      });
+      projectsWrap.style.display = 'block';
+    }
+  } catch (err) {
+    console.error('Hackatime fetch error', err);
+    summaryEl.textContent = 'Error loading Hackatime';
+  }
+};
+
+// GitHub refresh
+window.refreshGithub = async function(username) {
+  const githubSummary = document.getElementById('githubSummary');
+  const githubRepos = document.getElementById('githubRepos');
+
+  if (!githubSummary || !githubRepos) return;
+
+  githubSummary.textContent = 'Loading GitHub…';
+  githubRepos.innerHTML = '';
+
+  try {
+    const profileRes = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`);
+    const profile = await profileRes.json();
+    githubSummary.textContent = `${profile.login} • ${profile.public_repos} repos • ${profile.followers} followers`;
+
+    const reposRes = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100`);
+    const repos = await reposRes.json();
+    repos.sort((a, b) => b.stargazers_count - a.stargazers_count);
+
+    repos.slice(0, 8).forEach(r => {
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="${r.html_url}" target="_blank">${r.name} (${r.stargazers_count}★)</a>`;
+      githubRepos.appendChild(li);
+    });
+  } catch (err) {
+    console.error('GitHub fetch error', err);
+    githubSummary.textContent = 'Error loading GitHub';
+  }
+};
+
+// Startup: load saved settings once DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  const settings = JSON.parse(localStorage.getItem('settings')) || {};
+  if (settings.hackatimeUsername && settings.hackatimeKey) {
+    window.refreshHackatime(settings.hackatimeUsername, settings.hackatimeKey);
+  }
+  if (settings.githubUsername) {
+    window.refreshGithub(settings.githubUsername);
+  }
+});
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
 
