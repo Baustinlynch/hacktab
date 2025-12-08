@@ -12,7 +12,7 @@ A better new tab for Hack Clubbers
 | Extract the ZIP file to a folder | Extract the ZIP file to a folder |
 | Open `chrome://extensions/` | Open `edge://extensions/` |
 | Enable Developer Mode (toggle top right) | Enable Developer Mode (toggle bottom left) |
-| Click “Load unpacked” and select the Hacktab folder | Click “Load unpacked” and select the Hacktab folder |
+| Click “Load unpacked” and select the Hacktab folder (ensure that you are selecting the root folder - *not* `hacktab > hacktab > *files*` | Click “Load unpacked” and select the Hacktab folder |
 | Hacktab appears as your new tab extension | Hacktab appears as your new tab extension |
 
 
