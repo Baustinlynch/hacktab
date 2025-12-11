@@ -360,35 +360,66 @@ html.theme-green {
       .window { grid-column: span 12; }
     }
 
-    .setting-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
+  .setting-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
 
-.setting-group label {
-  font-weight: 500;
-  color: var(--text);
-}
+  .setting-group label {
+    font-weight: 500;
+    color: var(--text);
+  }
 
-.setting-group select {
-  background: var(--card);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 14px;
-}
+  .setting-group select {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+  }
 
-.setting-group select:hover {
-  border-color: var(--accent);
-}
+  .setting-group select:hover {
+    border-color: var(--accent);
+  }
 
+  #shortcutForm button {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    cursor: pointer;
+  }
 
+  #shortcutForm input {
+      color: var(--text);
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: transparent;
+  }
 
+  #shortcutForm {
+    padding-top: 10px;
+  }
+
+  #clearCustomShortcuts {
+    width: 100%;
+    color: var(--text);
+    padding: 10px 12px;
+    margin-top: 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: transparent;
+  }
+
+  #clearCustomShortcuts:hover {
+    border: 1px solid var(--muted);
+  }
   </style>
 </head>
 <body>
@@ -484,12 +515,28 @@ html.theme-green {
               <div class="title">Shortcuts</div>
             </div>
             <div class="window-content">
-              <ul style="list-style:none; padding:0; margin:0; display:grid; gap:10px;">
-                <li><a href="https://hackclub.com" style="color: var(--accent); text-decoration: none;">Hack Club</a></li>
-                <li><a href="https://hackclub.slack.com" style="color: var(--accent-2); text-decoration: none;">Hack Club Slack</a></li>
-                <li><a href="https://github.com" style="color: var(--accent-3); text-decoration: none;">GitHub</a></li>
-                <li><a href="https://news.ycombinator.com" style="color: var(--accent); text-decoration: none;">Hacker News</a></li>
+              <ul style="list-style:none; padding:0; margin:0; display:grid; gap:10px;" id="shortcutList">
               </ul>
+              <form class="addShortcut" id="shortcutForm">
+                  <input 
+                    id="shortcutName" 
+                    name="Name"
+                    type="text"
+                    placeholder="Shortcut Name"
+                    autocomplete="off"
+                    aria-label="Shortcut name"
+                  />
+                  <input
+                    id="shortcutURL"
+                    name="URL"
+                    type="text"
+                    placeholder="URL"
+                    autocomplete="off"
+                    aria-label="Shortcut URL"
+                  />
+                  <button type="button" id="saveShortcutButton">Add</button>
+                </form>
+                <button type="button" id="clearCustomShortcuts">Clear Custom Shortcuts</button>
             </div>
           </div>
  
