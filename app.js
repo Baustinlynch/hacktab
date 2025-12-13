@@ -57,7 +57,7 @@ window.refreshHackatime = async function(username, apiKey) {
     }
   } catch (err) {
     console.error('Hackatime fetch error', err);
-    summaryEl.textContent = 'Error loading Hackatime';
+    summaryEl.textContent = 'Error loading Hackatime, Do you have internet? You should get it, honestly, its really useful.';
   }
 };
 
@@ -87,7 +87,7 @@ window.refreshGithub = async function(username) {
     });
   } catch (err) {
     console.error('GitHub fetch error', err);
-    githubSummary.textContent = 'Error loading GitHub';
+    githubSummary.textContent = 'Error loading GitHub, Do you have internet?';
   }
 };
 
