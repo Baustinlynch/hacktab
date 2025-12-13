@@ -23,7 +23,7 @@ window.refreshHackatime = async function(username, apiKey) {
   try {
     // Today’s status FIXED!????
     const todayRes = await fetch(
-  `${BASE_HACKATIME_V1}/users/current/statusbar/today?api_key=${encodeURIComponent(apiKey)}`
+  `${BASE_V1}/users/current/statusbar/today?api_key=${encodeURIComponent(apiKey)}`
 );
 const todayJson = await todayRes.json();
 
