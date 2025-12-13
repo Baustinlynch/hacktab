@@ -22,7 +22,7 @@ A better new tab for <a href="https://hackclub.com">hack clubbers</a>
 | Hacktab appears as your new tab extension | Hacktab appears as your new tab extension |
 
 ## How to get you Hackatime API key
-[Open this link](https://hackatime.hackclub.com/my/wakatime_setup) and scroll down to the code block and your API key will be within the command, copy it out and insert it into box in the settings page
+[Pop to Hackatime](https://hackatime.hackclub.com/my/wakatime_setup) and scroll down to the code block. Copy your API key, then open settings on hacktab and paste it under the Hackatime field.
 
 ## Shooting Troubles (otherwise known as TroubleShooting)
 - ensure that you are selecting the root folder - *not* `hacktab > hacktab > *files*`
